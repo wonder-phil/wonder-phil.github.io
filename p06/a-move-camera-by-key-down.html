@@ -1,40 +1,94 @@
 
+
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Advanced A-Frame Scene</title>
-    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
-    <script>
-      AFRAME.registerComponent('custom-controls', {
-        init: function () {
-          this.el.sceneEl.addEventListener('keydown', (event) => {
-            if (event.code === 'Space') {
-              const position = this.el.getAttribute('position');
-              this.el.setAttribute('position', {
-                x: position.x,
-                y: position.y,
-                z: position.z - 0.1
-              });
-            }
+<head>
+  <meta charset="utf-8">
+  <title>A-Frame Keyboard Controls</title>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+
+  <script>
+    AFRAME.registerComponent('custom-controls', {
+      init: function () {
+        const objects = this.el.querySelectorAll('.movable');
+        const step = 0.3;
+
+        window.addEventListener('keydown', (event) => {
+          let dx = 0, dy = 0, dz = 0;
+
+          switch (event.code) {
+            case 'ArrowUp':
+              dz = -step;
+              break;
+            case 'ArrowDown':
+              dz = step;
+              break;
+            case 'ArrowLeft':
+              dx = -step;
+              break;
+            case 'ArrowRight':
+              dx = step;
+              break;
+            case 'Space':
+              dy = step;
+              break;
+            default:
+              return;
+          }
+
+          event.preventDefault();
+
+          objects.forEach((obj) => {
+            const p = obj.getAttribute('position');
+
+            obj.setAttribute('position', {
+              x: p.x + dx,
+              y: p.y + dy,
+              z: p.z + dz
+            });
           });
-        }
-      });
-    </script>
-  </head>
-  <body>
-	<!-- <script src="../js/aframe.min.js"></script> -->
-    <a-scene>
-      <!-- Camera with custom controls -->
-      <a-entity camera custom-controls position="0 1.6 0"></a-entity>
+        });
+      }
+    });
+  </script>
+</head>
 
-      <!-- Add some objects to the scene -->
-      <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="2 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="-1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+<body>
+  <a-scene custom-controls>
 
-      <!-- Sky background -->
-      <a-sky color="#ECECEC"></a-sky>
-    </a-scene>
-  </body>
+    <!-- Camera -->
+    <a-entity camera look-controls
+              position="0 1.6 0">
+    </a-entity>
+
+    <!-- Movable objects -->
+    <a-box class="movable"
+           position="0 0.5 -3"
+           rotation="0 45 0"
+           color="#4CC3D9">
+    </a-box>
+
+    <a-sphere class="movable"
+              position="2 1.25 -5"
+              radius="1.25"
+              color="#EF2D5E">
+    </a-sphere>
+
+    <a-cylinder class="movable"
+                position="-1 0.75 -3"
+                radius="0.5"
+                height="1.5"
+                color="#FFC65D">
+    </a-cylinder>
+
+    <!-- Stationary ground -->
+    <a-plane position="0 0 -4"
+             rotation="-90 0 0"
+             width="20"
+             height="20"
+             color="#7BC8A4">
+    </a-plane>
+
+  </a-scene>
+</body>
 </html>
+
